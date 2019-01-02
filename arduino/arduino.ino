@@ -22,7 +22,6 @@ constexpr uint32_t  SEND_INTERVAL       = 60000;
 
 constexpr uint32_t  MAINTANK_REJECT     = 290;  // reject readings that are more than this many uS apart
 constexpr uint32_t  MAINTANK_TIMEOUT    = 1000; // timeout in uS for waiting for rising signal
-constexpr uint32_t  MAINTANK_CONVERT    = 58;   // cm = uS / MAINTANK_CONVERT
 
 constexpr uint32_t  AUXTANK_REJECT      = 10;   // reject readings that are more than this many apart
 
