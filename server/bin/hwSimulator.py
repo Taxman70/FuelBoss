@@ -4,9 +4,9 @@ import sys, os, time, argparse, serial, re, datetime
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import project.config
+import fuelboss.config
 
-config = project.config.load()
+config = fuelboss.config.load()
 
 args = None
 port = None

@@ -1,10 +1,10 @@
 
 from peewee import *
 
-from ..db import db, ProjectModel, addModel
+from ..db import db, FuelBossModel, addModel
 
 
-class Version(ProjectModel):
+class Version(FuelBossModel):
     name = CharField(unique = True)
     version = IntegerField()
     

@@ -8,23 +8,25 @@ from threading import Thread, Event
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import project.config
+import fuelboss.config
 
-config = project.config.load()
+config = fuelboss.config.load()
 
-import project.logging
+import fuelboss.logging
 
-project.logging.configure()
+fuelboss.logging.configure()
 logger = logging.getLogger('Server')
 
-from project.bus import bus
-import project.daemon as daemon
-import project.serial
+from fuelboss.bus import bus
+import fuelboss.daemon as daemon
+import fuelboss.serial
 
-from project.db import initializeDB, db
+from fuelboss.db import initializeDB, db
 
-from project.app import app
-from project.socket import socket
+from fuelboss.app import app
+from fuelboss.socket import socket
+import fuelboss.core
+
 
 webThread = None
 exitEvent = Event()
@@ -83,7 +85,7 @@ def startServer():
     logger.info('Server stopped')
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = 'Project server')
+    parser = argparse.ArgumentParser(description = 'FuelBoss server')
     parser.add_argument('cmd', choices = ['start', 'stop', 'restart', 'status', 'debug'],
                         help = 'the command to run')
     args = parser.parse_args()

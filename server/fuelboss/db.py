@@ -21,7 +21,7 @@ db = SqliteDatabase(config.getpath('db', 'dbFile'), pragmas = {
 def connect():
     db.connect()
 
-class ProjectModel(Model):
+class FuelBossModel(Model):
     pass
 
 class ModelError(Exception):
