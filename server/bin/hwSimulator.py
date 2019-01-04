@@ -12,6 +12,44 @@ args = None
 port = None
 loopDelta = 0.25
 
+
+class Gauge:
+
+    def __init__(self, gauge, enabled = True, interval = 1, value = 0, minValue = 0, maxValue = 100, dir = 1):
+        self.gauge = gauge
+        self.enabled = enabled
+        self.interval = interval
+        self.value = value
+        self.minValue = minValue
+        self.maxValue = maxValue
+        self.dir = dir
+        self.lastUpdateTime = 0
+        
+    def update(self):
+        if not self.enabled: return False
+        if ((time.time() - self.lastUpdateTime) > self.interval):
+            self.lastUpdateTime = time.time()
+            self.value = self.value + self.dir
+            if self.value > self.maxValue:
+                self.value = self.maxValue
+                self.dir = -self.dir
+            elif self.value < self.minValue:
+                self.value = self.minValue
+                self.dir = -self.dir
+            return True
+        else:
+            return False
+            
+gauges = [
+#    Gauge(0, minValue = 1450, maxValue = 7930, value = 1450, dir = 100),
+    Gauge(1, enabled = False),
+    Gauge(2, enabled = False),
+    Gauge(3, value = 95),
+    Gauge(4, enabled = False),
+    Gauge(5, enabled = False),
+    Gauge(6, enabled = False),
+]
+
 def run():
     global port
     
@@ -30,7 +68,7 @@ def run():
                         buffer = ''
                 else:
                     buffer = buffer + ch
-            # call loop* functions
+            loopGauges()
         except KeyboardInterrupt:
             break
         
@@ -63,6 +101,15 @@ def processEEPROMCommand(cmd):
     else:
         sendError('invalid EEPROM command')
     
+
+def loopGauges():
+    for gauge in gauges:
+        if gauge.update():
+            sendGaugeEvent(gauge.gauge, gauge.value)
+        
+
+
+
 
 # Utilities    
     
@@ -107,6 +154,11 @@ def sendOK():
 def sendEvent(str):
     send('*' + str)
     
+def sendGaugeEvent(gauge, value):
+    sendEvent('G{},{}'.format(int(gauge), int(value)))
+    
+def sendSwitchEvent(switch, value):
+    sendEvent('S{},{}'.format(int(switch), int(value)))
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Hardware Simulator')

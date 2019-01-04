@@ -7,6 +7,8 @@ from .config import config
 from .bus import bus
 from .db import db, ModelError
 
+from .models import Tank
+
 
 socket = SocketIO()
 _logger = logging.getLogger('Socket')
@@ -61,6 +63,10 @@ def validateParams(params, rules):
             if len(rule) == 1 or rule[1]:
                 raise ValidationError('{} is required'.format(param))
     
+def buildSettings():
+    settings = dict(config['client'])
+    return settings
+    
 #================================================================
 # socket events
 # These events represent the client-side API
@@ -78,6 +84,8 @@ def _socket_default_error_handler(e):
 @socket.on('connect')
 def _socket_connect():
     _logger.info('Connection opened from {}'.format(request.remote_addr))
+    emit('settings', buildSettings())
+    
 
 @socket.on('disconnect')
 def _socket_disconnect():
@@ -86,9 +94,24 @@ def _socket_disconnect():
 
     
     
+#-------------------------------
+# tank
+#
+    
+@socket.on('tank_getAll')
+def _socket_tank_getAll():
+    _logger.debug('recv tank_getAll')
+    return success(tanks = [t.toDict() for t in Tank.tanks])
+
+    
     
 #================================================================
 # bus events
 # These events represents things happening in the server the client needs to know about
 #
     
+@bus.on('tank/changed')
+def _bus_tank_changed(tank):
+    socketEmit('tank_changed', tank.toDict())
+    
+
