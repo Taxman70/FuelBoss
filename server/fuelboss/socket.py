@@ -103,6 +103,13 @@ def _socket_tank_getAll():
     _logger.debug('recv tank_getAll')
     return success(tanks = [t.toDict() for t in Tank.tanks])
 
+@socket.on('tank_getOne')
+def _socket_tank_getOne(id):
+    _logger.debug('recv tank_getOne ' + str(id))
+    tank = Tank.Tank.tankForId(id)
+    if not tank:
+        return error('Tank not found!')
+    return success(tank = tank.toDict())
     
     
 #================================================================

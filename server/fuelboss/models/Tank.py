@@ -3,7 +3,8 @@ import logging, importlib
 
 from ..config import config
 from ..bus import bus
-from .Units import Units
+from ..Units import Units
+from ..RRD import RRD
 
 
 _logger = logging.getLogger('Tank')
@@ -38,19 +39,27 @@ class Tank:
     def tankForGauge(gauge):
         return next((t for t in tanks if t.gauge == gauge), None)
     
+    @staticmethod
+    def tankForId(id):
+        return next((t for t in tanks if t.id == id), None)
+    
     def __init__(self, id, conf):
         self.id = id
         self.name = conf['name'] if 'name' in conf else 'unknown'
         self.type = conf['type'] if 'type' in conf else 'cube'
         self.gauge = int(conf['gauge']) if 'gauge' in conf else 1
         self.toDepth = conf['toDepth'] if 'toDepth' in conf else 'g'
+        self.warningVolume = float(conf['warningVolume']) if 'warningVolume' in conf else 10
+        self.criticalVolume = float(conf['criticalVolume']) if 'criticalVolume' in conf else 1
         self.units = Units(conf['units'] if 'units' in conf else DEFAULT_UNITS)
+        self.rrd = RRD(self, conf)
 
         for param in [k for k in conf.keys() if k.startswith('param-')]:
             setattr(self, param[6:], float(conf[param]))
     
-        self.liters = 0
-        self.filled = 0
+    def __postinit__(self):
+        self.liters = self.rrd.lastupdate()
+        self.filled = self.liters / self.capacity()
     
     def __repr__(self):
         return 'Tank[name: {}, type: {}, gauge: {}]'.format(self.name, self.type, self.gauge)
@@ -71,6 +80,9 @@ class Tank:
         self.filled = self.liters / self.capacity()
         
         _logger.debug('tank "{}": {:0.3f}l ({:0.3f}g), {:0.1f}%'.format(self.name, self.liters, self.liters * 0.264172, self.filled * 100))
+        
+        self.rrd.update(self.liters)
+        
         bus.emit('tank/changed', self)
         
     def toDict(self):
@@ -80,5 +92,9 @@ class Tank:
             'type': self.type,
             'liters': self.liters,
             'filled': self.filled,
+            'warningVolume': self.warningVolume,
+            'criticalVolume': self.criticalVolume,
+            'units': self.units.toDict(),
+            'graphs': len(self.rrd.graphs),
         }
         

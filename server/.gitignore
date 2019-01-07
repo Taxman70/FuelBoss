@@ -8,6 +8,8 @@ var/*.log
 var/*.log.*
 var/*.db*
 var/*.pid
+var/rrd/*.rrd
+var/rrd-graph/*.png
 etc/config.ini
 
 

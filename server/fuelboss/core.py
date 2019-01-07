@@ -35,3 +35,21 @@ def _processGaugeReading(gauge, value):
 def _processSwitchReading(switch, value):
     pass
     
+def restart():
+    cmd = config.get('core', 'restartCommand').split(' ')
+    out = subprocess.run(cmd,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.STDOUT,
+            universal_newlines = True)
+    if out.returncode != 0:
+        _logger.error('Error trying to restart: {}'.format(out.stdout))
+        
+def shutdown():
+    cmd = config.get('core', 'shutdownCommand').split(' ')
+    out = subprocess.run(cmd,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.STDOUT,
+            universal_newlines = True)
+    if out.returncode != 0:
+        _logger.error('Error trying to shutdown: {}'.format(out.stdout))
+    

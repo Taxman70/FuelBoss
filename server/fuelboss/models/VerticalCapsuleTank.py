@@ -16,6 +16,7 @@ class VerticalCapsuleTank(Tank):
         self.depth = float(conf['depth']) if 'depth' in conf else 0
         self.radius = self.width / 2
         self.halfCircleArea = math.pi * math.pow(self.radius, 2) / 2
+        super().__postinit__()
 
     def __repr__(self):
         return 'VerticalCapsuleTank[name: {}, gauge: {}]'.format(self.name, self.gauge)

@@ -14,6 +14,7 @@ export default new Router({
   }, {
     path: '/tank/:id',
     name: 'tank',
+    props: true,
     component: () => import(/* webpackChunkName: "tank" */ './views/Tank.vue'),
   }, {
     path: '/about',

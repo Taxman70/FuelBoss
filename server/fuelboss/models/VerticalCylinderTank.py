@@ -15,6 +15,7 @@ class VerticalCylinderTank(Tank):
         self.width = float(conf['width']) if 'width' in conf else 0
         self.depth = float(conf['depth']) if 'depth' in conf else 0
         self.cylinderArea = math.pi * (self.width / 2) * (self.length / 2)
+        super().__postinit__()
 
     def __repr__(self):
         return 'VerticalCylinderTank[name: {}, gauge: {}]'.format(self.name, self.gauge)

@@ -1,6 +1,6 @@
 
 import os, logging
-from flask import Flask, send_from_directory
+from flask import Flask, request, send_from_directory, send_file, abort
 
 from .config import config
 
@@ -50,6 +50,20 @@ def send_audio(path):
     _logger.debug('Request for /audio/{}'.format(path))
     return send_from_directory(config.getpath('audio', 'audioDir'), path)
 
+@app.route('/tank/<int:tankId>/rrd/<int:graphId>')
+def send_tankRRD(tankId, graphId):
+    _logger.debug('Request for /tank/{}/rrd/{}'.format(tankId, graphId))
+    from .models.Tank import Tank
+    tank = Tank.tankForId(tankId)
+    if tank is None:
+        abort(404)
+    file = tank.rrd.graph(graphId)
+    if file is None:
+        abort(404)
+    if os.path.isfile(file):
+        return send_file(file, mimetype = 'image/png')
+    abort(500)
+    
 @app.route('/', defaults = { 'path': ''})
 @app.route('/<path:path>')
 def index(path):

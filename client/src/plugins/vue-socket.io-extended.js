@@ -1,17 +1,11 @@
+
 import Vue from 'vue'
-import VueSocketio from 'vue-socket.io-extended';
+import VueSocketio from 'vue-socket.io-extended'
 import io from 'socket.io-client';
 import store from '../store/store'
+import server from '../server'
 
-var loc = location.href
-if (process.env.NODE_ENV === 'development') {
-    if (process.env.VUE_APP_SERVER_LOCATION)
-        loc = process.env.VUE_APP_SERVER_LOCATION
-    else
-        loc = 'http://localhost:8080'
-}
-
-Vue.use(VueSocketio, io(loc), {
+Vue.use(VueSocketio, io(server.uri()), {
     store,
     actionPrefix: 'socket_',
     eventToActionTransformer: (ev) => {
@@ -24,4 +18,6 @@ Vue.use(VueSocketio, io(loc), {
 });
 
 // eslint-disable-next-line
-console.log('Server location is ' + loc)
+console.log('Server location is ' + server.uri())
+
+

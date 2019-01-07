@@ -15,7 +15,7 @@ loopDelta = 0.25
 
 class Gauge:
 
-    def __init__(self, gauge, enabled = True, interval = 1, value = 0, minValue = 0, maxValue = 100, dir = 1):
+    def __init__(self, gauge, enabled = True, interval = 60, value = 0, minValue = 0, maxValue = 100, dir = 1):
         self.gauge = gauge
         self.enabled = enabled
         self.interval = interval
@@ -41,7 +41,7 @@ class Gauge:
             return False
             
 gauges = [
-#    Gauge(0, minValue = 1450, maxValue = 7930, value = 1450, dir = 100),
+    Gauge(0, minValue = 1450, maxValue = 7930, value = 1450, dir = 100),
     Gauge(1, enabled = False),
     Gauge(2, enabled = False),
     Gauge(3, value = 95),

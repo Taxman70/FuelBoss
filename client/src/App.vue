@@ -11,12 +11,6 @@
       app
     >
       <v-list>
-        <v-list-tile @click="drawer = false">
-          <v-list-tile-action>
-            <v-icon>mdi-arrow-left</v-icon>
-          </v-list-tile-action>
-        </v-list-tile>
-      
         <v-list-tile @click="gotoAbout()">
           <v-list-tile-action>
             <v-icon>mdi-information</v-icon>
@@ -93,7 +87,6 @@
 <script>
 
 import { mapState } from 'vuex'
-//import bus from './bus'
 import HTMLTitle from './components/HTMLTitle'
 import ConnectingDialog from './components/ConnectingDialog'
 import ErrorDialog from './components/ErrorDialog'

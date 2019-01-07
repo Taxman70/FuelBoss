@@ -9,6 +9,7 @@ class CubeTank(Tank):
         self.length = float(conf['length']) if 'length' in conf else 0
         self.width = float(conf['width']) if 'width' in conf else 0
         self.depth = float(conf['depth']) if 'depth' in conf else 0
+        super().__postinit__()
 
     def __repr__(self):
         return 'CubeTank[name: {}, gauge: {}]'.format(self.name, self.gauge)

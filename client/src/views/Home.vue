@@ -1,25 +1,36 @@
 <template>
 
-  <v-container fluid fill-height pa-0>
-    <v-layout column justify-start fill-height>
-    
+  <v-container fluid>
+    <v-layout row justify-center>
+      <tank-gauge
+        v-for="tank in tanks"
+        :key="tank.id"
+        :tank="tank"
+      />
     </v-layout>
-      
+
+    <v-layout row justify-center>
+      <span>Switches go here</span>
+    </v-layout>
+    
   </v-container>
   
 </template>
 
 <script>
 
-//import { mapState } from 'vuex'
+import { mapState } from 'vuex'
+import TankGauge from '../components/TankGauge'
 
 export default {
   name: 'Home',
+  
   data() {
     return {}
   },
   
   components: {
+    TankGauge,
   },
   
   created() {
@@ -27,6 +38,9 @@ export default {
   },
   
   computed: {
+    ...mapState({
+      tanks: state => state.tanks.tanks,
+    }),
   },
   
   beforeRouteEnter(to, from, next) {

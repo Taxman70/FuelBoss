@@ -1,20 +1,20 @@
 <template>
 
-  <v-card flat>
-    
-    <loading v-if="loading"></loading>
-    
-    <template v-else>
-    
-      <div class="pa-3">
-      
-        <h1 class="mb-3">{{tank.name}}</h1>
-        
-      </div>
-      
-    </template>
-    
-  </v-card>
+  <v-container fluid>
+    <v-layout row justify-center>
+      <v-layout column align-center>
+        <tank-gauge :tank="tank"/>
+        <tank-graph
+          v-for="i in tank.graphs"
+          :key="i"
+          :tank="tank"
+          :graph="i"
+        />
+      </v-layout>
+    </v-layout>
+
+  </v-container>
+
         
 </template>
 
@@ -22,23 +22,31 @@
 
 import { mapState } from 'vuex'
 import Loading from '../components/Loading'
+import TankGauge from '../components/TankGauge'
+import TankGraph from '../components/TankGraph'
 
 export default {
   name: 'Tank',
+  
   props: {
     id: {},
   }, 
+  
   data() {
+  
     return {
     }
+    
   },
   
   components: {
     Loading,
+    TankGauge,
+    TankGraph,
   },
   
   created() {
-    this.$emit('show-page', 'Tanks')
+    this.$emit('show-page', 'Tank')
   },
   
   computed: {
@@ -46,7 +54,11 @@ export default {
     ...mapState({
       loading: state => state.tanks.loading,
       tank: state => state.tanks.tank,
-    })
+    }),
+    
+    numGraphs() {
+      return this.tank.graphs
+    },
     
   },
   
