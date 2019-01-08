@@ -62,7 +62,7 @@ class RRD:
                 
     def update(self, value):
         if not os.path.isfile(self.file):
-            self.createFile()
+            self.create()
             if not os.path.isfile(self.file):
                 return
         rrdtool.update(self.file, 'N:{}'.format(value))
@@ -73,12 +73,12 @@ class RRD:
         data = rrdtool.lastupdate(self.file)
         return data['ds']['volume']
         
-    def createFile(self):
+    def create(self):
         args = [
             self.file,
             '--start', 'now',
             '--step', str(self.step),
-            'DS:volume:GAUGE:{}:0:U'.format(self.step),
+            'DS:volume:GAUGE:{}:0:U'.format(self.step * 2),
         ]
         for archive in self.archives:
             args.append('RRA:{}'.format(archive))

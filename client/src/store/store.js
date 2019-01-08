@@ -2,12 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import tanks from './modules/tanks'
+import switches from './modules/switches'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     modules: {
         tanks: tanks,
+        switches: switches,
     },
     
     state: {

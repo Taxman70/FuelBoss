@@ -5,6 +5,7 @@ from .config import config
 from .bus import bus
 from .serial import serial
 from .models.Tank import Tank
+from .models.Switch import Switch
 
 
 _gaugeEventPattern = re.compile(r"G(\d+),(\d+)")
@@ -33,7 +34,11 @@ def _processGaugeReading(gauge, value):
     tank.updateVolume(value)
     
 def _processSwitchReading(switch, value):
-    pass
+    switch = Switch.switchForSwitch(switch)
+    if not switch:
+        _logger.warning('No switch found for switch {}. Maybe the switch should be disabled?'.format(switch))
+        return
+    switch.update(value)
     
 def restart():
     cmd = config.get('core', 'restartCommand').split(' ')

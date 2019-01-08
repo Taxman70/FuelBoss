@@ -8,6 +8,7 @@ from .bus import bus
 from .db import db, ModelError
 
 from .models import Tank
+from .models import Switch
 
 
 socket = SocketIO()
@@ -111,6 +112,23 @@ def _socket_tank_getOne(id):
         return error('Tank not found!')
     return success(tank = tank.toDict())
     
+#-------------------------------
+# switch
+#
+    
+@socket.on('switch_getAll')
+def _socket_switch_getAll():
+    _logger.debug('recv switch_getAll')
+    return success(switches = [s.toDict() for s in Switch.switches])
+
+@socket.on('switch_getOne')
+def _socket_switch_getOne(id):
+    _logger.debug('recv switch_getOne ' + str(id))
+    switch = Switch.Switch.switchForId(id)
+    if not switch:
+        return error('Switch not found!')
+    return success(switch = switch.toDict())
+    
     
 #================================================================
 # bus events
@@ -120,5 +138,9 @@ def _socket_tank_getOne(id):
 @bus.on('tank/changed')
 def _bus_tank_changed(tank):
     socketEmit('tank_changed', tank.toDict())
+    
+@bus.on('switch/changed')
+def _bus_switch_changed(switch):
+    socketEmit('switch_changed', switch.toDict())
     
 

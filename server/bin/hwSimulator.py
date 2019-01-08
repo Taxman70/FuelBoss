@@ -15,8 +15,8 @@ loopDelta = 0.25
 
 class Gauge:
 
-    def __init__(self, gauge, enabled = True, interval = 60, value = 0, minValue = 0, maxValue = 100, dir = 1):
-        self.gauge = gauge
+    def __init__(self, id, enabled = True, interval = 60, value = 0, minValue = 0, maxValue = 100, dir = 1):
+        self.id = id
         self.enabled = enabled
         self.interval = interval
         self.value = value
@@ -40,6 +40,24 @@ class Gauge:
         else:
             return False
             
+class Switch:
+
+    def __init__(self, id, enabled = True, interval = 60, value = True):
+        self.id = id
+        self.enabled = enabled
+        self.interval = interval
+        self.value = value
+        self.lastUpdateTime = 0
+        
+    def update(self):
+        if not self.enabled: return False
+        if ((time.time() - self.lastUpdateTime) > self.interval):
+            self.lastUpdateTime = time.time()
+            self.value = not self.value
+            return True
+        else:
+            return False
+        
 gauges = [
     Gauge(0, minValue = 1450, maxValue = 7930, value = 1450, dir = 100),
     Gauge(1, enabled = False),
@@ -50,6 +68,12 @@ gauges = [
     Gauge(6, enabled = False),
 ]
 
+switches = [
+    Switch(0, value = True),
+    Switch(1, value = False),
+]
+    
+    
 def run():
     global port
     
@@ -69,6 +93,7 @@ def run():
                 else:
                     buffer = buffer + ch
             loopGauges()
+            loopSwitches()
         except KeyboardInterrupt:
             break
         
@@ -105,7 +130,12 @@ def processEEPROMCommand(cmd):
 def loopGauges():
     for gauge in gauges:
         if gauge.update():
-            sendGaugeEvent(gauge.gauge, gauge.value)
+            sendGaugeEvent(gauge.id, gauge.value)
+        
+def loopSwitches():
+    for switch in switches:
+        if switch.update():
+            sendSwitchEvent(switch.id, switch.value)
         
 
 
@@ -154,11 +184,11 @@ def sendOK():
 def sendEvent(str):
     send('*' + str)
     
-def sendGaugeEvent(gauge, value):
-    sendEvent('G{},{}'.format(int(gauge), int(value)))
+def sendGaugeEvent(id, value):
+    sendEvent('G{},{}'.format(int(id), int(value)))
     
-def sendSwitchEvent(switch, value):
-    sendEvent('S{},{}'.format(int(switch), int(value)))
+def sendSwitchEvent(id, value):
+    sendEvent('S{},{}'.format(int(id), int(value)))
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Hardware Simulator')
